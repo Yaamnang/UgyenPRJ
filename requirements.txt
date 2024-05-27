@@ -5,4 +5,3 @@ selenium
 pandas
 numpy
 scikit-learn
-pickle
