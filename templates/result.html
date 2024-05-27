@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Results - Scraper and Toxicity Predictor</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="mt-5">Toxicity Prediction Results</h1>
+      <h2 class="mt-4">Original Comments and Toxicity Probabilities</h2>
+      <table class="table table-striped mt-3">
+        <thead>
+          <tr>
+            <th>Comment</th>
+            <th>Toxicity Probabilities</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for comment, toxicity_probs in toxicity_results.items() %}
+          <tr>
+            <td>{{ comment }}</td>
+            <td>
+              <ul>
+                {% for toxicity_type, probability in toxicity_probs.items() %}
+                <li>{{ toxicity_type }}: {{ probability }}</li>
+                {% endfor %}
+              </ul>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <a href="/" class="btn btn-primary mt-3">Go Back</a>
+    </div>
+  </body>
+</html>

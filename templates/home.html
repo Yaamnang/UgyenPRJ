@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>YouTube Comment Scraper and Toxicity Predictor</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="mt-5">YouTube Comment Scraper and Toxicity Predictor</h1>
+      <form method="get" action="/results" class="mt-4">
+        <div class="form-group">
+          <label for="url">YouTube Video URL</label>
+          <input
+            type="url"
+            class="form-control"
+            id="url"
+            name="url"
+            placeholder="Enter YouTube video URL"
+            required
+          />
+        </div>
+        <button type="submit" class="btn btn-primary">
+          Get Comments and Predict Toxicity
+        </button>
+      </form>
+    </div>
+  </body>
+</html>
