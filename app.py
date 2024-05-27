@@ -10,12 +10,10 @@ import pickle
 import pandas as pd
 import re
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.pipeline import Pipeline
 import nltk
 from nltk import WordNetLemmatizer
 from nltk import pos_tag, word_tokenize
 from nltk.corpus import stopwords as nltk_stopwords
-import string
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -53,7 +51,7 @@ class TextPreprocessor(BaseEstimator, TransformerMixin):
         return X.apply(self.prepare_text)
 
 # Load the trained models from the pickle file
-with open('model.pkl', 'rb') as f:
+with open('model2.pkl', 'rb') as f:
     models = pickle.load(f)
 
 # Define a function to predict toxicity probabilities
