@@ -50,24 +50,10 @@ class TextPreprocessor(BaseEstimator, TransformerMixin):
     def transform(self, X, y=None):
         return X.apply(self.prepare_text)
 
-# Load the trained models from the pickle file
-# with open('model2.pkl', 'rb') as f:
-#     models = pickle.load(f)
 def load_models():
     with open('model2.pkl', 'rb') as f:
         models = pickle.load(f)
     return models
-
-# Define a function to predict toxicity probabilities
-# def predict_toxicity(new_comment):
-#     toxicity_probs = {}
-#     for toxicity_type, model in models.items():
-#         # Preprocess the comment using the text pipeline in the model
-#         preprocessed_comment = model.named_steps['text_pipeline'].transform(pd.Series([new_comment]))
-#         # Predict the probability of being toxic for each label
-#         toxicity_probs[toxicity_type] = model.named_steps['classifier'].predict_proba(preprocessed_comment)[0][1]
-    
-#     return toxicity_probs
 
 def predict_toxicity(new_comment, models):
     toxicity_probs = {}
@@ -103,20 +89,6 @@ def returnytcomments(url):
             data.append(comment.text)
     return data
 
-# @app.route('/')
-# def home():
-#     return render_template('home.html')
-
-# @app.route('/results', methods=['GET'])
-# def result():
-#     url = request.args.get('url')
-#     org_comments = returnytcomments(url)
-#     results = {}
-#     for comment in org_comments:
-#         toxicity_probs = predict_toxicity(comment)
-#         results[comment] = toxicity_probs
-#     return render_template('result.html', comments=org_comments, toxicity_results=results)
-
 @app.route('/')
 def home():
     return render_template('home.html')
@@ -133,9 +105,6 @@ def result():
         results[comment] = toxicity_probs
     return render_template('result.html', comments=org_comments, toxicity_results=results)
 
-
-
-if __name__ == '__main__':
-    # Load models when running the Flask app directly
-    models = load_models()
-    app.run(debug=True)
+# if __name__ == '__main__':
+#     models = load_models()
+#     app.run(debug=True)
