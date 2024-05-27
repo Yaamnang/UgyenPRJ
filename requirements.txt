@@ -2,3 +2,8 @@ Gunicorn
 Flask
 nltk 
 selenium
+pandas
+numpy
+re
+time
+pickle
