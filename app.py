@@ -93,7 +93,7 @@ def returnytcomments(url):
 def home():
     return render_template('home.html')
 
-@app.route('/result', methods=['GET'])
+@app.route('/results', methods=['GET'])
 def result():
     # Load models inside the Flask application context
     models = load_models()
