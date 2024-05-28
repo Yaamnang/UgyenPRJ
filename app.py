@@ -109,6 +109,7 @@
 #     models = load_models()
 #     app.run(debug=True)
 
+import os
 import time
 from flask import Flask, render_template, request
 from selenium import webdriver
@@ -177,7 +178,36 @@ def predict_toxicity(new_comment, models):
     return toxicity_probs
 
 # Function to scrape YouTube comments
+
 def returnytcomments(url):
+    data = []
+    
+    # Get the path to the current script directory
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    # Define the relative path to chromedriver.exe within the project directory
+    chrome_driver_path = os.path.join(current_dir, 'chromedriver.exe')
+    
+    service = Service(chrome_driver_path)
+    options = webdriver.ChromeOptions()
+    options.add_argument('--headless')  # Run in headless mode
+    options.add_argument('--disable-gpu')  # Disable GPU acceleration
+
+    with webdriver.Chrome(service=service, options=options) as driver:
+        wait = WebDriverWait(driver, 15)
+        driver.get(url)
+
+        # Scroll to load comments
+        for _ in range(5): 
+            wait.until(EC.visibility_of_element_located((By.TAG_NAME, "body"))).send_keys(Keys.END)
+            time.sleep(2)
+
+        # Extract comments
+        comments = wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#content-text")))
+        for comment in comments:
+            data.append(comment.text)
+    return data
+
+# def returnytcomments(url):
     data = []
     chrome_driver_path = r"C:\Program Files\ChromeDriver\chromedriver.exe"
     service = Service(chrome_driver_path)
