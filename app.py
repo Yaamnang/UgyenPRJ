@@ -19,9 +19,15 @@ from nltk.corpus import stopwords as nltk_stopwords
 # Initialize Flask app
 app = Flask(__name__)
 
+# Download required NLTK data
+nltk.download('wordnet')
+nltk.download('averaged_perceptron_tagger')
+nltk.download('punkt')
+nltk.download('stopwords')
+
 # Define the TextPreprocessor class
 class TextPreprocessor(BaseEstimator, TransformerMixin):
-    def _init_(self):
+    def __init__(self):
         self.wordnet_lemmatizer = WordNetLemmatizer()
         self.stopwords = set(nltk_stopwords.words('english'))
     
@@ -67,7 +73,6 @@ def predict_toxicity(new_comment, models):
     return toxicity_probs
 
 # Function to scrape YouTube comments
-
 def returnytcomments(url):
     data = []
     
@@ -84,31 +89,7 @@ def returnytcomments(url):
     with webdriver.Chrome(service=service, options=options) as driver:
         wait = WebDriverWait(driver, 15)
         driver.get(url)
-
-        # Scroll to load comments
-        for _ in range(5): 
-            wait.until(EC.visibility_of_element_located((By.TAG_NAME, "body"))).send_keys(Keys.END)
-            time.sleep(2)
-
-        # Extract comments
-        comments = wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#content-text")))
-        for comment in comments:
-            data.append(comment.text)
-    return data
-
-# def returnytcomments(url):
-    data = []
-    chrome_driver_path = r"C:\Program Files\ChromeDriver\chromedriver.exe"
-    service = Service(chrome_driver_path)
-    options = webdriver.ChromeOptions()
-    options.add_argument('--headless')  # Run in headless mode
-    options.add_argument('--disable-gpu')  # Disable GPU acceleration
-
-    with webdriver.Chrome(service=service, options=options) as driver:
-        wait = WebDriverWait(driver, 15)
-        driver.get(url)
-
-        # Scroll to load comments
+            # Scroll to load comments
         for _ in range(5): 
             wait.until(EC.visibility_of_element_located((By.TAG_NAME, "body"))).send_keys(Keys.END)
             time.sleep(2)
@@ -124,7 +105,7 @@ def home():
     return render_template('home.html')
 
 @app.route('/results', methods=['GET'])
-def result():
+def results():
     # Load models inside the Flask application context
     models = load_models()
     url = request.args.get('url')
@@ -133,8 +114,9 @@ def result():
     for comment in org_comments:
         toxicity_probs = predict_toxicity(comment, models)
         results[comment] = toxicity_probs
-    return render_template('result.html', comments=org_comments, toxicity_results=results)
+    return render_template('results.html', comments=org_comments, toxicity_results=results)
 
 if __name__ == '__main__':
     models = load_models()
-    app.run(debug=True)
+    app.run(debug=False, host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+
