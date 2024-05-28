@@ -66,10 +66,15 @@ class TextPreprocessor(BaseEstimator, TransformerMixin):
     def transform(self, X, y=None):
         return X.apply(self.prepare_text)
 
+# Custom unpickler to handle loading models
+def custom_load_models(file_path):
+    with open(file_path, 'rb') as f:
+        return pickle.load(f, fix_imports=True, encoding="utf-8", errors="strict", buffers=None, map_location=None, format_version=None, filters=None)
+
 def load_models():
     logging.info("Loading models...")
-    with open('model2.pkl', 'rb') as f:
-        models = pickle.load(f)
+    # Load models with custom unpickler
+    models = custom_load_models('model2.pkl')
     logging.info("Models loaded successfully.")
     return models
 
