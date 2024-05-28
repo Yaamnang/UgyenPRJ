@@ -7,10 +7,70 @@
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
     />
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+      body {
+        font-family: 'Roboto', sans-serif;
+        background: linear-gradient(135deg, #f9f9f9, #f1f1f1);
+        color: #333;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+      .container {
+        max-width: 600px;
+        background: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 30px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      h1 {
+        font-size: 26px;
+        font-weight: 700;
+        color: #ff0000;
+        margin-bottom: 20px;
+      }
+      .form-group label {
+        font-weight: 500;
+        color: #555;
+        text-align: left;
+        display: block;
+        margin-bottom: 10px;
+      }
+      .form-control {
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        box-shadow: none;
+        font-size: 16px;
+      }
+      .btn-primary {
+        background-color: #ff0000;
+        border-color: #ff0000;
+        font-weight: 500;
+        font-size: 16px;
+        width: 100%;
+        padding: 10px;
+        margin-top: 20px;
+      }
+      .btn-primary:hover {
+        background-color: #e60000;
+        border-color: #e60000;
+      }
+      .form-icon {
+        font-size: 20px;
+        color: #ff0000;
+        margin-right: 10px;
+      }
+    </style>
   </head>
   <body>
     <div class="container">
-      <h1 class="mt-5">YouTube Comment Scraper and Toxicity Predictor</h1>
+      <h1 class="mt-5"><i class="form-icon fas fa-comments"></i>YouTube Comment Scraper and Toxicity Predictor</h1>
       <form method="get" action="/results" class="mt-4">
         <div class="form-group">
           <label for="url">YouTube Video URL</label>
@@ -28,5 +88,6 @@
         </button>
       </form>
     </div>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
   </body>
 </html>
