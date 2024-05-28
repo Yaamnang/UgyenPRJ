@@ -69,7 +69,7 @@ class TextPreprocessor(BaseEstimator, TransformerMixin):
 # Custom unpickler to handle loading models
 def custom_load_models(file_path):
     with open(file_path, 'rb') as f:
-        return pickle.load(f, fix_imports=True, encoding="utf-8", errors="strict", buffers=None, map_location=None, format_version=None, filters=None)
+        return pickle.load(f, fix_imports=True, encoding="utf-8", errors="strict")
 
 def load_models():
     logging.info("Loading models...")
