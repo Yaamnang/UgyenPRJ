@@ -93,7 +93,7 @@ def returnytcomments(url):
 def home():
     return render_template('home.html')
 
-@app.route('/results', methods=['GET'])
+@app.route('/result', methods=['GET'])
 def result():
     # Load models inside the Flask application context
     models = load_models()
@@ -105,6 +105,6 @@ def result():
         results[comment] = toxicity_probs
     return render_template('result.html', comments=org_comments, toxicity_results=results)
 
-# if __name__ == '__main__':
-#     models = load_models()
-#     app.run(debug=True)
+if __name__ == '__main__':
+    models = load_models()
+    app.run(debug=True)
