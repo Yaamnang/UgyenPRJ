@@ -1,5 +1,6 @@
 import os
 import time
+import logging
 from flask import Flask, render_template, request
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -24,6 +25,14 @@ nltk.download('wordnet')
 nltk.download('averaged_perceptron_tagger')
 nltk.download('punkt')
 nltk.download('stopwords')
+
+# Initialize logger
+logging.basicConfig(level=logging.DEBUG)
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    logging.error(f"Error: {e}")
+    return "Internal Server Error", 500
 
 # Define the TextPreprocessor class
 class TextPreprocessor(BaseEstimator, TransformerMixin):
@@ -58,22 +67,26 @@ class TextPreprocessor(BaseEstimator, TransformerMixin):
         return X.apply(self.prepare_text)
 
 def load_models():
+    logging.info("Loading models...")
     with open('model2.pkl', 'rb') as f:
         models = pickle.load(f)
+    logging.info("Models loaded successfully.")
     return models
 
 def predict_toxicity(new_comment, models):
+    logging.info(f"Predicting toxicity for comment: {new_comment}")
     toxicity_probs = {}
     for toxicity_type, model in models.items():
         # Preprocess the comment using the text pipeline in the model
         preprocessed_comment = model.named_steps['text_pipeline'].transform(pd.Series([new_comment]))
         # Predict the probability of being toxic for each label
         toxicity_probs[toxicity_type] = model.named_steps['classifier'].predict_proba(preprocessed_comment)[0][1]
-
+    logging.info(f"Toxicity probabilities: {toxicity_probs}")
     return toxicity_probs
 
 # Function to scrape YouTube comments
 def returnytcomments(url):
+    logging.info(f"Scraping comments from URL: {url}")
     data = []
     
     # Get the path to the current script directory
@@ -86,18 +99,24 @@ def returnytcomments(url):
     options.add_argument('--headless')  # Run in headless mode
     options.add_argument('--disable-gpu')  # Disable GPU acceleration
 
-    with webdriver.Chrome(service=service, options=options) as driver:
-        wait = WebDriverWait(driver, 15)
-        driver.get(url)
+    try:
+        with webdriver.Chrome(service=service, options=options) as driver:
+            wait = WebDriverWait(driver, 15)
+            driver.get(url)
             # Scroll to load comments
-        for _ in range(5): 
-            wait.until(EC.visibility_of_element_located((By.TAG_NAME, "body"))).send_keys(Keys.END)
-            time.sleep(2)
+            for _ in range(5): 
+                wait.until(EC.visibility_of_element_located((By.TAG_NAME, "body"))).send_keys(Keys.END)
+                time.sleep(2)
 
-        # Extract comments
-        comments = wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#content-text")))
-        for comment in comments:
-            data.append(comment.text)
+            # Extract comments
+            comments = wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#content-text")))
+            for comment in comments:
+                data.append(comment.text)
+    except Exception as e:
+        logging.error(f"Error scraping YouTube comments: {e}")
+        raise e
+
+    logging.info(f"Scraped {len(data)} comments.")
     return data
 
 @app.route('/')
@@ -106,17 +125,20 @@ def home():
 
 @app.route('/results', methods=['GET'])
 def results():
-    # Load models inside the Flask application context
-    models = load_models()
-    url = request.args.get('url')
-    org_comments = returnytcomments(url)
-    results = {}
-    for comment in org_comments:
-        toxicity_probs = predict_toxicity(comment, models)
-        results[comment] = toxicity_probs
-    return render_template('results.html', comments=org_comments, toxicity_results=results)
+    try:
+        # Load models inside the Flask application context
+        models = load_models()
+        url = request.args.get('url')
+        org_comments = returnytcomments(url)
+        results = {}
+        for comment in org_comments:
+            toxicity_probs = predict_toxicity(comment, models)
+            results[comment] = toxicity_probs
+        return render_template('results.html', comments=org_comments, toxicity_results=results)
+    except Exception as e:
+        logging.error(f"Error in /results route: {e}")
+        return "Internal Server Error", 500
 
 if __name__ == '__main__':
     models = load_models()
     app.run(debug=False, host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
-
